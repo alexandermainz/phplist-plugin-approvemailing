@@ -24,7 +24,7 @@ class ApproveMailingsPlugin extends phplistPlugin
     public $name = 'Approve Mailings Plugin';
     public $version = '1.0';
     public $authors = 'Alexander Schmitt';
-    public $description = 'Plugin for phpList offering a workflow for approval of a mailing before it can be sent out';
+    public $description = 'Plugin for phpList offering a workflow for approval of a mailing campaign before it can be sent out';
     public $enabled = true;
     public $coderoot = PLUGIN_ROOTDIR . '/ApproveMailingsPlugin/';
     public $needI18N = 1;
@@ -75,6 +75,14 @@ class ApproveMailingsPlugin extends phplistPlugin
     }
 
     /**
+     * Provide "empty" admin menu instead of the "hello world" example from the base class.
+     */
+    public function adminmenu()
+    {
+        return array();
+    }
+
+    /**
      * This hook adds a tab to the send page, which allows the user to request approval for the mailing.
      */
     public function sendMessageTab($messageid = 0, $messagedata = array())
@@ -107,22 +115,11 @@ class ApproveMailingsPlugin extends phplistPlugin
         // if the mailing has not just been approved right now with the "Approve"-Button of this form,
         //  it must be checked if the mailing needs approval and appropriate info texts and buttons must be shown
         if (!$approved) {
-            // check if the mailing needs approvement by checking, if it shall be sent to a list that needs approvement
-            $mustApprove = false;
-            // get the list of mailinglists-IDs that need approvement from the plugin settings
-            $lists = getConfig('ListsNeedingApprovement');
-            // convert the comma-separated list to an array
-            $listArray = explode(",", $lists);
-            // loop through the list array and check if each number is an index in the targetlist array
-            foreach ($listArray as $number) {
-                if (array_key_exists($number, $messagedata["targetlist"])) {
-                    $mustApprove = true;
-                    break;
-                }
-            }
-
+            // check if the mailing needs approval
+            $mustApprove = $this->mustApprove($messagedata);
+            // needs approval, show the necessary info texts and buttons
             if ($mustApprove) {
-                // check if the message has already been approved by a different admin
+                // check if the message has not already been approved by a different admin
                 if (!isset($messagedata['approver']) || $messagedata['approver'] == $messagedata['owner']) {
                     // if not, show the approval button, the "Request approvement" button and an input field
                     //  for the email address where the request should be sent to
@@ -150,6 +147,9 @@ class ApproveMailingsPlugin extends phplistPlugin
         return $html;
     }
 
+    /**
+     * The tiotle for the additonal tab on the send page.
+     */
     public function sendMessageTabTitle($messageid = 0)
     {
         return $this->i18n->get('Approval');
@@ -197,13 +197,9 @@ class ApproveMailingsPlugin extends phplistPlugin
         mail($to, $subject, $message, $headers);
     }
 
-    public function adminmenu()
-    {
-        return array();
-    }
-
+    
     /**
-     * Return i18n Language Dir so that main page content can be extended
+     * Return i18n language path where the transaltion files reside
      */
     public function i18nLanguageDir()
     {
@@ -221,11 +217,39 @@ class ApproveMailingsPlugin extends phplistPlugin
     {
         // get the messagedata
         $messagedata = loadMessageData($id);
-        // show a status info, if the campaign has been approved
-        if (isset($messagedata['approver']) && $messagedata['approver'] != $messagedata['owner'])
-            return ' - '.$this->i18n->get('status_approved');
-        else
-            return ' - '.$this->i18n->get('status_not_approved');
+        // only show the status info, if the mailing needs approval
+        if ($this->mustApprove($messagedata))
+        {
+            // add a status info text with the approval status
+            if (isset($messagedata['approver']) && $messagedata['approver'] != $messagedata['owner'])
+                return ' - '.$this->i18n->get('status_approved');
+            else
+                return ' - '.$this->i18n->get('status_not_approved');
+        }
+        return '';
     }
+
+    /**
+     * Check, if the given messsage needs approvement by checking, if it shall be sent to a list
+     *  that needs approvement.
+     */
+    private function mustApprove($messagedata)
+    {
+        $mustApprove = false;
+        // get the list of mailinglists-IDs that need approvement from the plugin settings
+        $lists = getConfig('ListsNeedingApprovement');
+        // convert the comma-separated list to an array
+        $listArray = explode(",", $lists);
+        // loop through the list array and check if each number is an index in the targetlist array
+        foreach ($listArray as $number) {
+            if (array_key_exists($number, $messagedata["targetlist"])) {
+                $mustApprove = true;
+                break;
+            }
+        }
+
+        return $mustApprove;
+    }
+
 }
 ?>

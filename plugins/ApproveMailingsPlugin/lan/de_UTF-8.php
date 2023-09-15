@@ -14,6 +14,8 @@
    'plugin_title' => 'Approve Mailings Plugin',
    'plugin_description' => 'Plugin für phpList, welches einen Prozess bereitstellt, um Mailings vor dem Versand freigeben zu lassen',
    'Approval' => 'Freigabe',
+   'ListsNeedingApprovement' => 'IDs der Empfängerlisten, die beim Versand eine Freigabe erfordern, getrennt durch Komma',
+   'ApproverEmail' => 'Standard-E-Mail-Adresse, an die Anfragen zur Freigabe gesendet werden sollen',
    'msg_needs_approval' => 'Dieses Mailing muss freigegeben werden, bevor es versendet werden kann. Die Freigabe muss durch einen anderen Administrator erfolgen als den, der dieses Mailing erstellt hat.',
    'status_approved' => 'freigegeben',
    'status_not_approved' => 'benötigt Freigabe',

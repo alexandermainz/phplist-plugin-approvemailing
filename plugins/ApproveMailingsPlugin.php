@@ -65,7 +65,12 @@ class ApproveMailingsPlugin extends phplistPlugin
      */
     public function activate()
     {
+
+        // set the i18n object and set the settings texts with the correct translations
         $this->i18n = new CommonPlugin_I18N($this);
+        $this->settings['ListsNeedingApprovement']['description'] = $this->i18n->get('ListsNeedingApprovement');
+        $this->settings['ApproverEmail']['description'] = $this->i18n->get('ApproverEmail');
+
         parent::activate();
     }
 

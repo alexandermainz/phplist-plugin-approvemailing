@@ -14,6 +14,8 @@
    'plugin_title' => 'Approve Mailings Plugin',
    'plugin_description' => 'Plugin for phpList offering a workflow for approval of a mailing before it can be sent out',
    'Approval' => 'Approval',
+   'ListsNeedingApprovement' => 'IDs of lists that need approvement when sent to, separated by comma',
+   'ApproverEmail' => 'Default E-Mail address to send approval requests to',
    'msg_needs_approval' => 'This mailing needs approval before it can be sent out. This must be done by a different administrator than the one who created the campaign.',
    'status_approved' => 'approved',
    'status_not_approved' => 'needs approval',

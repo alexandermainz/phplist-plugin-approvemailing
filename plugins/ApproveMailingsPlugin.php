@@ -22,7 +22,7 @@
 class ApproveMailingsPlugin extends phplistPlugin
 {
     public $name = 'Approve Mailings Plugin';
-    public $version = '1.0';
+    public $version = '1.1';
     public $authors = 'Alexander Schmitt';
     public $description = 'Plugin for phpList offering a workflow for approval of a mailing campaign before it can be sent out';
     public $enabled = true;

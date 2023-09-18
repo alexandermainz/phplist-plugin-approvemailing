@@ -164,7 +164,8 @@ class ApproveMailingsPlugin extends phplistPlugin
     public function allowMessageToBeQueued($messagedata = array())
     {
         // check if the mailing is approved
-        if (isset($messagedata['approver']) && $messagedata['approver'] != $messagedata['owner'])
+        if (!$this->mustApprove($messagedata) ||
+            isset($messagedata['approver']) && $messagedata['approver'] != $messagedata['owner'])
             return '';
         else
             return $this->i18n->get('err_not_approved');
